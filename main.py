@@ -41,15 +41,35 @@ class ListOfItems:
             print("This customer name doesn't exist.")
         return temp
 
-    def table(self,my_list):
-        for i in range(20):
-            pass
-        for i in my_list:
-            print("-", end="")
-            print("\n|", end="")
-            print(i,end="")
-        for i in range(20):
-            print("-", end="")
+    def tableDesign(self, my_list):
+        for i in range(100):
+            while i<25:
+                print("-", end="")
+                i += 1
+            if i == 25:
+                print("|", end="")
+            while i < 50:
+                print("-", end="")
+                i += 1
+            if i == 50:
+                print("|", end="")
+            elif i <75:
+                print("-", end="")
+            elif i == 75:
+                print("|", end="")
+            elif i < 100:
+                print("-", end="")
+            elif i == 100:
+                print("|\n")
+                for j in my_list:
+                    print("\n| ", end="")
+                    print(j, end="")
+                    for k in range(100):
+                        if k == 0:
+                            print("\n-", end="")
+                        else:
+                            print("-", end="")
+
 
     # Displays all items booked for repair, sorted by customer name
     def sortItem(self):
@@ -75,7 +95,7 @@ def menu():
     # Creates our list
     listOfItems = ListOfItems()
     ta=(1,2,3,4,5,6)
-    listOfItems.table(ta)
+    listOfItems.tableDesign(ta)
     # Runs the menu until user presses "x" and exits the program
     while True:
         print("\n1 - Book item")
