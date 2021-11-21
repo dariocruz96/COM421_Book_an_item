@@ -41,6 +41,16 @@ class ListOfItems:
             print("This customer name doesn't exist.")
         return temp
 
+    def table(self,my_list):
+        for i in range(20):
+            pass
+        for i in my_list:
+            print("-", end="")
+            print("\n|", end="")
+            print(i,end="")
+        for i in range(20):
+            print("-", end="")
+
     # Displays all items booked for repair, sorted by customer name
     def sortItem(self):
         # Used insertion sort
@@ -60,8 +70,12 @@ class ListOfItems:
 
 
 def menu():
+    print("Welcome to Solent Computer Rapairs!\n"
+          "How can I help you today?")
     # Creates our list
     listOfItems = ListOfItems()
+    ta=(1,2,3,4,5,6)
+    listOfItems.table(ta)
     # Runs the menu until user presses "x" and exits the program
     while True:
         print("\n1 - Book item")
