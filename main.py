@@ -19,6 +19,14 @@ class ListOfItems:
     def addItem(self, item):
         self.listOfItems.append(item)
 
+    def popItem(self, customerName):
+        for element in self.listOfItems:
+            # Looks for a entry with the same costumer name
+            if element.customerName == customerName:
+                temp = element
+                self.listOfItems.remove(element)
+                return temp
+
     # Searches for an item using costumer name
     def searchItem(self, customerName):
         temp = []
@@ -38,16 +46,12 @@ class ListOfItems:
         # Used insertion sort
         for i in range(0, len(self.listOfItems) - 1):
             for j in range(0, len(self.listOfItems) - i - 1):
-                # Runs name list to compare on our "left"
-                for listItem in self.listOfItems:
-                    # Runs name list to compare on our "right"
-                    for compareItem in self.listOfItems:
-                        # If the name is alphabetical "smaller" then the following name, it will switch the names
-                        # position
-                        if listItem.customerName > compareItem.customerName:
-                            tempVar = self.listOfItems[j]
-                            self.listOfItems[j] = self.listOfItems[j + 1]
-                            self.listOfItems[j + 1] = tempVar
+                # If the name is alphabetical "smaller" then the following name, it will switch the names
+                # position
+                if self.listOfItems[j].customerName > self.listOfItems[j+1].customerName:
+                    tempVar = self.listOfItems[j]
+                    self.listOfItems[j] = self.listOfItems[j + 1]
+                    self.listOfItems[j + 1] = tempVar
         return "\n".join(str(item) for item in self.listOfItems)
 
     # Returns readable content
@@ -64,6 +68,7 @@ def menu():
         print("2 - Search item")
         print("3 - Sort by customer name")
         print("4 - Search item by costumer name")
+        print("5 - Delete item")
 
         print("x - Exit Application\n")
         choice = input()
@@ -73,7 +78,7 @@ def menu():
                 item1 = Item("Tiago", "Macbook", "Macbook pro 15.1 2016")
                 item2 = Item("Andre", "Laptop", "Asus ROG gtx 1060")
                 item3 = Item("Dario", "Desktop", "MSI GLA Combat")
-                item4 = Item("Dario", "Laptop", "Alienware")
+                item4 = Item("Filipe", "Laptop", "Alienware")
                 item5 = Item("Dario", "Desktop", "Rog MXO")
                 # Adds items to our list
                 listOfItems.addItem(item1)
@@ -100,6 +105,12 @@ def menu():
                 print("Found Item:")
                 for costumer in foundItem:
                     print(f"{costumer[0]} {costumer[1]} {costumer[2]}")
+
+            # Delete an item after being repaired
+            elif choice == "5":
+                print("After repairing:")
+                print(listOfItems.popItem("Dario"))
+                print("The item will now be deleted from database...\nDone!")
 
             # Exit program
             elif choice == "x":
