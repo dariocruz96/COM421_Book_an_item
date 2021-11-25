@@ -23,52 +23,20 @@ class ListOfItems:
         for element in self.listOfItems:
             # Looks for a entry with the same costumer name
             if element.customerName == customerName:
-                temp = element
                 self.listOfItems.remove(element)
-                return temp
+                return element
 
     # Searches for an item using costumer name
     def searchItem(self, customerName):
         temp = []
-        count = 0
         # Looks for every entry in our list
         for element in self.listOfItems:
             # Looks for a entry with the same costumer name
             if element.customerName == customerName:
                 temp.append((element.customerName, element.itemType, element.itemDescription))
-                count += 1
-        if count == 0:
+        if len(temp) == 0:
             print("This customer name doesn't exist.")
         return temp
-
-    def tableDesign(self, my_list):
-        for i in range(100):
-            while i<25:
-                print("-", end="")
-                i += 1
-            if i == 25:
-                print("|", end="")
-            while i < 50:
-                print("-", end="")
-                i += 1
-            if i == 50:
-                print("|", end="")
-            elif i <75:
-                print("-", end="")
-            elif i == 75:
-                print("|", end="")
-            elif i < 100:
-                print("-", end="")
-            elif i == 100:
-                print("|\n")
-                for j in my_list:
-                    print("\n| ", end="")
-                    print(j, end="")
-                    for k in range(100):
-                        if k == 0:
-                            print("\n-", end="")
-                        else:
-                            print("-", end="")
 
 
     # Displays all items booked for repair, sorted by customer name
@@ -78,24 +46,32 @@ class ListOfItems:
             for j in range(0, len(self.listOfItems) - i - 1):
                 # If the name is alphabetical "smaller" then the following name, it will switch the names
                 # position
-                if self.listOfItems[j].customerName > self.listOfItems[j+1].customerName:
+                if self.listOfItems[j].customerName > self.listOfItems[j + 1].customerName:
                     tempVar = self.listOfItems[j]
                     self.listOfItems[j] = self.listOfItems[j + 1]
                     self.listOfItems[j + 1] = tempVar
         return "\n".join(str(item) for item in self.listOfItems)
 
+
+
     # Returns readable content
     def __str__(self):
         return "\n".join(str(item) for item in self.listOfItems)
 
+def tableDesign(my_list):
+    for i in my_list:
+        for j in range(101):
+            print("-", end="")
+        print("")
+        print(f"|\t{i.customerName:<25}|\t{i.itemType:<25}|\t{i.itemDescription:<40}|")
+    for j in range(101):
+        print("-", end="")
 
 def menu():
     print("Welcome to Solent Computer Rapairs!\n"
           "How can I help you today?")
     # Creates our list
     listOfItems = ListOfItems()
-    ta=(1,2,3,4,5,6)
-    listOfItems.tableDesign(ta)
     # Runs the menu until user presses "x" and exits the program
     while True:
         print("\n1 - Book item")
@@ -145,6 +121,9 @@ def menu():
                 print("After repairing:")
                 print(listOfItems.popItem("Dario"))
                 print("The item will now be deleted from database...\nDone!")
+
+            elif choice == "6":
+                tableDesign(listOfItems)
 
             # Exit program
             elif choice == "x":
