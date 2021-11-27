@@ -82,7 +82,7 @@ class ListOfItems:
             if temp == len(self.listOfItems):
                 break
 
-        return hashCode % 200
+        return hashCode
 
     def tableDesign(self):
         cn = "Customer Name"
@@ -117,7 +117,7 @@ def menu():
     while True:
         print("\n1 - Book item")
         print("2 - Search item by serial number")
-        print("3 - Sort by customer name")
+        print("3 - Show items sorted by customer name")
         print("4 - Search item by customer name")
         print("5 - Delete item")
 
