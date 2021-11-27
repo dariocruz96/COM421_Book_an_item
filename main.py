@@ -6,7 +6,6 @@ class Item:
         self.itemDescription = itemDescription
         self.serialNumber = serialNumber
 
-
     # Returns readable content
     def __str__(self):
         return f"{self.customerName} {self.itemType} {self.itemDescription} {self.serialNumber}"
@@ -72,6 +71,8 @@ class ListOfItems:
         for ch in name:
             hashCode += (ord(ch) - 96) * (31 ** count)
             count += 1
+        # This will reduce the size of the serial number, but will limit it
+        hashCode = hashCode % 2000
         while True:
             temp = 0
             for x in self.listOfItems:
@@ -107,12 +108,48 @@ class ListOfItems:
         return "\n".join(str(item) for item in self.listOfItems)
 
 
+class Queue:
+
+    def __init__(self, capacity=10):
+        self.front = 0
+        self.back = 0
+        self.queueSize = 0
+        self.data = [None] * capacity
+        self.capacity = capacity
+
+    def add(self, item):
+        self.data[self.back] = item
+        self.back += 1
+        # wrap around the index
+        if self.back == self.capacity:
+            self.back = 0
+        # increase queue size by 1
+        self.queueSize += 1
+
+    def remove(self):
+        temp = self.data[self.front]
+        self.data[self.front] = None
+        self.front += 1
+        # wrap around the index
+        if self.front == self.capacity:
+            self.front = 0
+        self.queueSize -= 1
+        return temp
+
+    def size(self):
+        return self.queueSize
+
+    def __str__(self):
+        return self.data.__str__()
+
+
 def menu():
     print("Welcome to Solent Computer Repairs!\n"
           "How can I help you today?")
     # Creates our list
     listOfItems = ListOfItems()
-    firstAdd = 0
+    enquiries = Queue()
+    firstLoop = 0
     # Runs the menu until user presses "x" and exits the program
     while True:
         print("\n1 - Book item")
@@ -120,13 +157,14 @@ def menu():
         print("3 - Show items sorted by customer name")
         print("4 - Search item by customer name")
         print("5 - Delete item")
+        print("6 - Enquiries")
 
         print("x - Exit Application\n")
         choice = input()
         if choice:
             # Book an item
             if choice == "1":
-                if firstAdd == 0:
+                if firstLoop == 0:
                     item1 = Item("Tiago", "Macbook", "Macbook pro 15.1 2016", "12341")
                     item2 = Item("Andre", "Laptop", "Asus ROG gtx 1060", "123124")
                     item3 = Item("Dario", "Desktop", "MSI GLA Combat", "123123")
@@ -138,7 +176,7 @@ def menu():
                     listOfItems.addItem(item3)
                     listOfItems.addItem(item4)
                     listOfItems.addItem(item5)
-                    firstAdd += 1
+                    firstLoop += 1
                     print("BOOKING AN ITEM\n\n---Information Required---\n")
                 while True:
                     customer_name = input("Customer name:\n")
@@ -191,7 +229,33 @@ def menu():
                 tempList.tableDesign()
                 print("\nThe item will now be deleted from database...\nDone!")
 
+
             elif choice == "6":
+                while True:
+                    print("\n1 - Client")
+                    print("2 - Staff")
+                    print("x - Exit Application\n")
+                    choice = input()
+                    if choice:
+                        # Client
+                        if choice == "1":
+                            enquiry = input("Please leave your enquiry for staff to answer:\n")
+                            enquiries.add(enquiry)
+                        # Staff
+                        elif choice == "2":
+                            if enquiries.queueSize == 0:
+                                print("You don't have new enquiries on hold!")
+                            else:
+                                while enquiries.queueSize > 0:
+                                    print(f"You got {enquiries.queueSize} enquiries on hold!")
+                                    print(enquiries.remove())
+                                    input("Your reply:\n")
+                                print("You have answered all the enquiries!")
+
+                        elif choice == "x":
+                            break
+
+            elif choice == "0":
                 listOfItems.tableDesign()
 
             # Exit program
