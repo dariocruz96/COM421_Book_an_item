@@ -14,57 +14,50 @@ class Item:
 class ListOfItems:
     # Creates our list
     def __init__(self):
-        self.listOfItems = []
+        self.data = []
 
-    # Adds an item to our list
+    # Option 1 - Adds an item to our list
     def addItem(self, item):
-        self.listOfItems.append(item)
+        self.data.append(item)
 
-    def popItem(self, serialNumber):
-        for element in self.listOfItems:
+    # Option 2 - Searches for an item using serial number
+    def searchItemsBySerial(self, serialNumber):
+        temp = []
+        # Looks for every entry in our list
+        for element in self.data:
             # Looks for a entry with the same serial number
-            if int(element.serialNumber) == serialNumber:
-                self.listOfItems.remove(element)
-                return element
+            if element.serialNumber == serialNumber:
+                temp.append(element)
+                break
+        if len(temp) == 0:
+            print("This serial number doesn't exist.")
 
-    # Searches for an item using costumer name
+        return temp
+
+    #  Option 4 - Searches for an item using costumer name
     def searchItemByName(self, customerName):
         temp = []
         # Looks for every entry in our list
-        for element in self.listOfItems:
+        for element in self.data:
             # Looks for a entry with the same costumer name
             if element.customerName.lower() == customerName.lower():
-                temp.append((element.customerName, element.itemType, element.itemDescription, element.serialNumber))
+                temp.append(element)
+
         if len(temp) == 0:
             print("This customer name doesn't exist.")
+            temp = "None"
+
         return temp
 
-    # Searches for an item using costumer name
-    def searchItemBySerial(self, serialNumber):
-        temp = []
-        # Looks for every entry in our list
-        for element in self.listOfItems:
-            # Looks for a entry with the same costumer name
-            if element.serialNumber == serialNumber:
-                temp.append((element.customerName, element.itemType, element.itemDescription, element.serialNumber))
-        if len(temp) == 0:
-            print("This serial number doesn't exist.")
-        return temp
+    # Option 5 - Deletes an item from our list and returns it after repair
+    def deleteItem(self, serialNumber):
+        for element in self.data:
+            # Looks for a entry with the same serial number
+            if int(element.serialNumber) == serialNumber:
+                self.data.remove(element)
+                return element
 
-    # Displays all items booked for repair, sorted by customer name
-    def sortItem(self):
-        # Used insertion sort
-        for i in range(0, len(self.listOfItems) - 1):
-            for j in range(0, len(self.listOfItems) - i - 1):
-                # If the name is alphabetical "smaller" then the following name, it will switch the names
-                # position
-                if self.listOfItems[j].customerName > self.listOfItems[j + 1].customerName:
-                    tempVar = self.listOfItems[j]
-                    self.listOfItems[j] = self.listOfItems[j + 1]
-                    self.listOfItems[j + 1] = tempVar
-        return "\n".join(str(item) for item in self.listOfItems)
-
-    # Calculate Hash
+    # Calculate serial number using Hash
     def serialNumber(self, name):
         count = 0
         hashCode = 0
@@ -75,39 +68,96 @@ class ListOfItems:
         hashCode = hashCode % 2000
         while True:
             temp = 0
-            for x in self.listOfItems:
+            for x in self.data:
                 if x.serialNumber == str(hashCode):
                     hashCode += 1
                 else:
                     temp += 1
-            if temp == len(self.listOfItems):
+            if temp == len(self.data):
                 break
 
         return hashCode
 
-    def tableDesign(self):
-        cn = "Customer Name"
-        it = "Item Type"
-        ides = "Item Description"
-        sc = "Serial Code"
-        bar = "|"
+    # Returns readable content
+    def __str__(self):
+        return self.data.__str__()
+
+
+def tableDesign(listOfItems):
+    cn = "Customer Name"
+    it = "Item Type"
+    ides = "Item Description"
+    sc = "Serial Code"
+    bar = "|"
+    for j in range(222):
+        print("-", end="")
+    print("")
+    print(f"|{cn:>22}{it:>50}{ides:>91}{bar:>38}\t {sc:<16}|")
+    for i in listOfItems:
         for j in range(222):
             print("-", end="")
         print("")
-        print(f"|{cn:>22}{it:>50}{ides:>91}{bar:>38}\t {sc:<16}|")
-        for i in self.listOfItems:
-            for j in range(222):
-                print("-", end="")
-            print("")
-            print(f"|\t{i.customerName:<35}|\t{i.itemType:<50}|\t{i.itemDescription:<105}|\t{i.serialNumber:<17}|")
-        for j in range(222):
-            print("-", end="")
-
-    # Returns readable content
-    def __str__(self):
-        return "\n".join(str(item) for item in self.listOfItems)
+        print(
+            f"|\t{i.customerName:<35}|\t{i.itemType:<50}|\t{i.itemDescription:<105}|\t{i.serialNumber:<17}|")
+    for j in range(222):
+        print("-", end="")
 
 
+# Option 3 - Displays all items booked for repair, sorted by customer name
+def mergesort(data):
+    sortedListA = []
+    sortedListB = []
+    if len(data) > 1:
+        # mid of the array
+        pivot = len(data) // 2
+        # left side
+        listA = data[:pivot]
+        # right side
+        listB = data[pivot:]
+        sortedListA = mergesort(listA)
+        sortedListB = mergesort(listB)
+    elif len(data) == 1:
+        return data
+    sortedList = merge(sortedListA, sortedListB)
+    return sortedList
+
+
+def merge(listA, listB):
+    # Set counterA to 0
+    counterA = 0
+    # Set counterB to 0
+    counterB = 0
+    sorted_list = []
+
+    while counterA < len(listA) and counterB < len(listB):
+        customerNameA = listA[counterA].customerName.lower()
+        customerNameB = listB[counterB].customerName.lower()
+
+        if customerNameA <= customerNameB:
+            # Add listA[counterA] to sorted_list
+            sorted_list.append(listA[counterA])
+            # Increase counterA by 1
+            counterA += 1
+
+        elif customerNameB < customerNameA:
+            # Add listB[counterB] to sorted_list
+            sorted_list.append(listB[counterB])
+            # Increase counterB by 1
+            counterB += 1
+
+        # At this point we will have added all elements from ONE of the two lists
+        # to the output list but not the other
+    while counterA < len(listA):
+        sorted_list.append(listA[counterA])
+        counterA += 1
+    while counterB < len(listB):
+        sorted_list.append(listB[counterB])
+        counterB += 1
+
+    return sorted_list
+
+
+# Option 6 - Creates a queue to create and answer enquiries
 class Queue:
 
     def __init__(self, capacity=10):
@@ -143,14 +193,82 @@ class Queue:
         return self.data.__str__()
 
 
+# Option 7 - routing
+'''
+import sys
+import heapq
+from heapq import heappush, heappop
+
+class Node:
+  def __init__(self, name):
+    self.data = (sys.maxsize, self)
+    self.name = name
+    self.parent = None
+    self.edges = []
+    self.used = False
+    self.isOnOpenList = False # boolean specifiying whether the node
+    # is on the open list, preventing us adding it twice
+
+  # Add an edge to the list of edges from this node
+  def add_edge(self, edge):
+    self.edges.append(edge)
+
+
+class Edge:
+  def __init__(self, startNode, endNode, dist):
+    self.startNode = startNode
+    self.endNode = endNode
+    self.dist = dist
+
+class Graph:
+  def add_edge(self, startNode, endNode, dist):
+    # Create an edge using the two nodes n1 and n2
+    # and the distance passed in
+    edge1=Edge(startNode, endNode, dist)
+    edge2=Edge(endNode, startNode, dist)
+    n1 = Node(edge1)
+    n2 = Node(edge2)
+    #n1(edge1)
+    #n2(edge2)
+    print(n1)
+
+  # Actually do the Dijkstra algorithm
+  def dijkstra(self, start, end):
+    cur_node = start
+    open_list = []
+
+    # start.data[0] = 0
+    start.data = (0, start)
+    heappush(open_list, start.data)
+
+    while cur_node != end and len(open_list) > 0:
+      hp = heappop(h)
+    print(hp)
+newedge = Graph()
+print(newedge.add_edge("lisboa", "porto", 120))
+new_edge = Graph
+new_edge.add_edge("lisboa","porto", 120)
+new_edge.add_edge("porto","coimbra", 120)
+new_edge.add_edge("coimbra","olhao", 120)
+new_edge.add_edge("olhao","tavira", 120)
+new_edge.add_edge("tavira","castelo", 120)
+new_edge.add_edge("castelo","braga", 120)
+'''
+
+
+# -------------Menu------------------#
+
+
 def menu():
     print("Welcome to Solent Computer Repairs!\n"
           "How can I help you today?")
+
     # Creates our list
     listOfItems = ListOfItems()
+    # Creates our enquiry queue
     enquiries = Queue()
-    firstLoop = 0
     # Runs the menu until user presses "x" and exits the program
+
     while True:
         print("\n1 - Book item")
         print("2 - Search item by serial number")
@@ -158,26 +276,13 @@ def menu():
         print("4 - Search item by customer name")
         print("5 - Delete item")
         print("6 - Enquiries")
-
         print("x - Exit Application\n")
         choice = input()
+
         if choice:
             # Book an item
             if choice == "1":
-                if firstLoop == 0:
-                    item1 = Item("Tiago", "Macbook", "Macbook pro 15.1 2016", "12341")
-                    item2 = Item("Andre", "Laptop", "Asus ROG gtx 1060", "123124")
-                    item3 = Item("Dario", "Desktop", "MSI GLA Combat", "123123")
-                    item4 = Item("Filipe", "Laptop", "Alienware", "12313")
-                    item5 = Item("Dario", "Desktop", "Rog MXO", "12412313")
-                    # Adds items to our list
-                    listOfItems.addItem(item1)
-                    listOfItems.addItem(item2)
-                    listOfItems.addItem(item3)
-                    listOfItems.addItem(item4)
-                    listOfItems.addItem(item5)
-                    firstLoop += 1
-                    print("BOOKING AN ITEM\n\n---Information Required---\n")
+                print("BOOKING AN ITEM\n\n---Information Required---\n")
                 while True:
                     customer_name = input("Customer name:\n")
                     if customer_name == "":
@@ -187,59 +292,56 @@ def menu():
                 serial = listOfItems.serialNumber(customer_name)
                 item_type = input("Item type:\n")
                 item_description = input("Item description:\n")
-                item_temp = Item(f"{customer_name}", f"{item_type}", f"{item_description}", f"{serial}")
+                item_temp = Item(f"{customer_name}", f"{item_type}",
+                                 f"{item_description}", f"{serial}")
                 listOfItems.addItem(item_temp)
 
-                print(f"\n\nItem added successfully!\t --- SERIAL NUMBER : {serial} ---")
+                print(
+                    f"\n\nItem added successfully!\t --- SERIAL NUMBER : {serial} ---")
 
             # Search an item by serial number
             elif choice == "2":
-                tempList = ListOfItems()
-                serialNumber = input("Please provide the serial number associated to the item belongs:\n")
-                foundItem = listOfItems.searchItemBySerial(serialNumber)
-                print("Found Item:")
-                for customer in foundItem:
-                    item = Item(f"{customer[0]}", f"{customer[1]}", f"{customer[2]}", f"{customer[3]}")
-                    tempList.addItem(item)
-                tempList.tableDesign()
+                serialNumber = input(
+                    "Please provide the serial number associated to the item belongs:\n")
+                foundItems = listOfItems.searchItemsBySerial(serialNumber)
+                if len(foundItems) != 0:
+                    print("Found Items:")
+                    tableDesign(foundItems)
 
             # Display all items booked for repair, sorted by customer name
             elif choice == "3":
-                listOfItems.sortItem()
-                listOfItems.tableDesign()
+                print("All items shown by customer name:")
+                sortedList = mergesort(listOfItems.data)
+                tableDesign(sortedList)
 
             # Search an item by costumer name
             elif choice == "4":
-                tempList = ListOfItems()
                 customer_name = input("Please provide the customer name:\n")
-                foundItem = listOfItems.searchItemByName(customer_name)
-                print("Found Item:")
-                for customer in foundItem:
-                    item = Item(f"{customer[0]}", f"{customer[1]}", f"{customer[2]}", f"{customer[3]}")
-                    tempList.addItem(item)
-                tempList.tableDesign()
+                foundItems = listOfItems.searchItemByName(customer_name)
+                if foundItems != "None":
+                    print(f"Items booked in for repair by {customer_name}:")
+                    tableDesign(foundItems)
 
             # Delete an item after being repaired
             elif choice == "5":
-                tempList = ListOfItems()
                 print("Item already repaired:")
                 serial = int(input("Serial Number: "))
-                item = listOfItems.popItem(serial)
-                tempList.addItem(item)
-                tempList.tableDesign()
+                item = listOfItems.deleteItem(serial)
+                tableDesign([item])
                 print("\nThe item will now be deleted from database...\nDone!")
 
-
+            # Enquiry menu
             elif choice == "6":
                 while True:
                     print("\n1 - Client")
                     print("2 - Staff")
-                    print("x - Exit Application\n")
+                    print("x - Back to main menu\n")
                     choice = input()
                     if choice:
                         # Client
                         if choice == "1":
-                            enquiry = input("Please leave your enquiry for staff to answer:\n")
+                            enquiry = input(
+                                "Please leave your enquiry for staff to answer:\n")
                             enquiries.add(enquiry)
                         # Staff
                         elif choice == "2":
@@ -247,16 +349,13 @@ def menu():
                                 print("You don't have new enquiries on hold!")
                             else:
                                 while enquiries.queueSize > 0:
-                                    print(f"You got {enquiries.queueSize} enquiries on hold!")
+                                    print(f"You got {enquiries.queueSize} enquiries on hold!\nEnquiry:")
                                     print(enquiries.remove())
                                     input("Your reply:\n")
                                 print("You have answered all the enquiries!")
 
                         elif choice == "x":
                             break
-
-            elif choice == "0":
-                listOfItems.tableDesign()
 
             # Exit program
             elif choice == "x":
